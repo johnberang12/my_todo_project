@@ -3,15 +3,36 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_own_project/screens/categories_screen.dart';
 import 'package:todo_own_project/screens/home_screen.dart';
+import 'package:todo_own_project/services/category_service.dart';
 
 class DrawerNavigation extends StatefulWidget {
-  const DrawerNavigation({Key? key}) : super(key: key);
+
 
   @override
   _DrawerNavigationState createState() => _DrawerNavigationState();
 }
 
 class _DrawerNavigationState extends State<DrawerNavigation> {
+
+  // CategoryService _categoryService = CategoryService();
+  //
+  // List<Widget>_categoryList = [];
+
+  // @override
+  // void initState(){
+  //   super.initState();
+  //   getAllCategories();
+  // }
+  //
+  // getAllCategories() async {
+  //   var categories = await _categoryService.getCategories();
+  //   categories.forEach((category) {
+  //     _categoryList.add(Card(child: ListTile(title: Text(category['name']),)));
+  //
+  //   });
+  //
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -46,7 +67,8 @@ class _DrawerNavigationState extends State<DrawerNavigation> {
                 Navigator.push(context, MaterialPageRoute(
                     builder: (context) => CategoriesScreen()));
               },
-            )
+            ),
+            // Column(children: _categoryList,)
           ],
         )
       ),

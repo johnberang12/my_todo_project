@@ -19,4 +19,12 @@ class CategoryService {
     return await _repository.getAll('categories');
   }
 
+   getCategoryById(categoryId) async{
+    return await _repository.getById('categories', categoryId);
+   }
+
+  updateCategory(Category category) async{
+    return await _repository.update('categories', category.categoryMap());
+  }
+
 }

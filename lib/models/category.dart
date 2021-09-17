@@ -1,11 +1,11 @@
 class Category{
-  late int id;
-  late String name;
-  late String description;
+     int? id;
+    String? name;
+    String? description;
 
   categoryMap(){
     var map = Map<String, dynamic>();
-    map['id'] = Map.identity();
+    map['id'] = id;
     map['name'] = name;
     map['description'] = description;
     return map;
