@@ -34,15 +34,17 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     getAllCategories();
   }
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   getAllCategories() async {
      _categoryList = [];
     var categories = await _categoryService.getCategories();
-     categories.forEach((_category) {
+     categories.forEach((category) {
        setState(() {
          var model = Category();
-         model.name = _category['name'];
-         model.id = _category['id'];
-         model.description = _category['description'];
+         model.name = category['name'];
+         model.id = category['id'];
+         model.description = category['description'];
          _categoryList.add(model);
        });
 
@@ -70,12 +72,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                     Navigator.pop(context);
                   }
                   print(result);
-
-
-
       },
-
-
               child: Text('Add')),
         ],
         title: Text('Category Form'),
@@ -103,7 +100,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     });
   }
 
-  _editCategoryDialog(BuildContext context){
+  _editCategoryDialog(BuildContext context, categoryId){
     return showDialog(context: context, barrierDismissible: true, builder: (param){
       return AlertDialog(
         actions: [
@@ -121,6 +118,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                   if(result > 0) {
                     Navigator.pop(context);
                     getAllCategories();
+                    _showSnackBar(Text('Success'));
                   }
                   print(result);
 
@@ -153,19 +151,62 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     });
   }
 
+  _deleteCategoryDialog(BuildContext context, categoryId){
+    return showDialog(context: context, barrierDismissible: true, builder: (param){
+      return AlertDialog(
+        actions: [
+          TextButton(
+              onPressed: (){
+                Navigator.pop(context);
+              },
+              style: TextButton.styleFrom(backgroundColor: Colors.green),
+              child: Text('Cancel', style: TextStyle(color: Colors.white))),
+          TextButton(
+              onPressed: () async{
+                var deleteResult =
+                  await _categoryService.deleteCategory(categoryId);
+                setState(() {
+                  if(deleteResult > 0){
+                    _categoryService.deleteCategory(categoryId);
+                    _showSnackBar(Text('Successfully Deleted'));
+                    getAllCategories();
+                  } else {
+                    _showSnackBar(('Delete failed'));
+                  }
+                  Navigator.pop(context);
+                });
+
+              },
+              style: TextButton.styleFrom(backgroundColor: Colors.red),
+
+              child: Text('delete', style: TextStyle(color: Colors.white),)),
+        ],
+        title: Text('Are you sure you want to delete this item?'),
+      );
+    });
+  }
+
   _editCategory(BuildContext context, categoryId) async {
      category = await _categoryService.getCategoryById(categoryId);
     setState(() {
       _editCategoryName.text = category[0]['name'];
       _editCategoryDescription.text = category[0]['description'];
     });
-    _editCategoryDialog(context);
+    _editCategoryDialog(context, categoryId);
+  }
+
+
+
+  _showSnackBar(message) {
+    var _snackBar = SnackBar(content: message);
+    _scaffoldKey.currentState!.showSnackBar(_snackBar);
   }
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text('Jo Ber'),
         leading: ElevatedButton(
@@ -193,7 +234,10 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               children: [
                 Text(_categoryList[index].name!),
 
-                IconButton(onPressed: (){}, icon: Icon(Icons.delete))
+                IconButton(onPressed: (){
+                  _deleteCategoryDialog(context, _categoryList[index].id);
+                },
+                    icon: Icon(Icons.delete))
               ],
             ),
           ),

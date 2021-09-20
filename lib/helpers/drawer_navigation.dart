@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_own_project/screens/categories_screen.dart';
 import 'package:todo_own_project/screens/home_screen.dart';
+import 'package:todo_own_project/screens/todos_by_category.dart';
 import 'package:todo_own_project/services/category_service.dart';
 
 class DrawerNavigation extends StatefulWidget {
@@ -13,25 +14,30 @@ class DrawerNavigation extends StatefulWidget {
 }
 
 class _DrawerNavigationState extends State<DrawerNavigation> {
+List<Widget> _categoryList = [];
+CategoryService _categoryService = CategoryService();
 
-  // CategoryService _categoryService = CategoryService();
-  //
-  // List<Widget>_categoryList = [];
+@override
+void initState(){
+  super.initState();
+  getAllCategories();
+}
 
-  // @override
-  // void initState(){
-  //   super.initState();
-  //   getAllCategories();
-  // }
-  //
-  // getAllCategories() async {
-  //   var categories = await _categoryService.getCategories();
-  //   categories.forEach((category) {
-  //     _categoryList.add(Card(child: ListTile(title: Text(category['name']),)));
-  //
-  //   });
-  //
-  // }
+getAllCategories ()async{
+  var categories = await _categoryService.getCategories();
+  categories.forEach((category){
+    var newItem = InkWell(
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(
+            builder: ( context) => TodosByCategory(category: category['name'])));
+      },
+        child: ListTile(title: Text(category['name']),));
+    setState(() {
+      _categoryList.add(newItem);
+    });
+  });
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +74,10 @@ class _DrawerNavigationState extends State<DrawerNavigation> {
                     builder: (context) => CategoriesScreen()));
               },
             ),
+            Divider(),
+          Column(
+        children: _categoryList
+    ),
             // Column(children: _categoryList,)
           ],
         )

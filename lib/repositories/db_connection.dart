@@ -8,17 +8,15 @@ import 'package:sqflite/sqflite.dart';
 class DatabaseConnection {
   setDatabase() async {
     Directory directory = await getApplicationDocumentsDirectory();
-    String path = join(directory.path, 'jobber.db');
-    var database = await openDatabase(path, version: 1, onCreate: _onCreateDatabase);
+    String path = join(directory.path, 'jobber2.db');
+    Database database = await openDatabase(path, version: 1, onCreate: _onCreateDatabase);
     return database;
   }
 
   _onCreateDatabase(Database db, int version) async {
-    await db.execute('CREATE TABLE categories('
-        'id INTEGER PRIMARY KEY, '
-        'name TEXT, '
-        'description TEXT) '
-    );
+    await db.execute("CREATE TABLE todos (id INTEGER PRIMARY KEY, title TEXT, description TEXT, category TEXT, todoDate TEXT, isFinished INTEGER)");
+    await db.execute("CREATE TABLE categories(id INTEGER PRIMARY KEY, name TEXT,description TEXT)");
+
   }
 
 }
